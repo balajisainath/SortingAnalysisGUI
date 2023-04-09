@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Random;
 
 
@@ -364,9 +365,18 @@ class GenerateButtonListener implements ActionListener {
 
     @Override
 
+//    public void actionPerformed(ActionEvent e) {
+//        int[] arr = RandomArrayGenerator.generateArray(1000);
+//        // JOptionPane.showMessageDialog(null, Arrays.toString(arr), "Random Array", JOptionPane.PLAIN_MESSAGE);
+//    }
     public void actionPerformed(ActionEvent e) {
         int[] arr = RandomArrayGenerator.generateArray(1000);
-        // JOptionPane.showMessageDialog(null, Arrays.toString(arr), "Random Array", JOptionPane.PLAIN_MESSAGE);
+        JTextArea textArea = new JTextArea(20, 60);
+        textArea.setText(Arrays.toString(arr));
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        JOptionPane.showMessageDialog(null, scrollPane, "Random Array", JOptionPane.PLAIN_MESSAGE);
     }
 
 }
