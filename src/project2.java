@@ -3,8 +3,10 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,7 +47,7 @@ class SortingAlgorithmsGUI extends JFrame {
 
         generateBtn.addActionListener(new GenerateButtonListener());
         playBtn.addActionListener(new PlayButtonListener(graphPanel));
-        //playBtn1.addActionListener(new PlayButton1Listener(graphPanel));
+        playBtn1.addActionListener(new PlayButton1Listener(graphPanel));
     }
 
 }
@@ -368,6 +370,92 @@ class GenerateButtonListener implements ActionListener {
     }
 
 }
+class PlayButton1Listener implements ActionListener {
+
+    private JPanel graphPanel;
+
+    public PlayButton1Listener(JPanel graphPanel) {
+        this.graphPanel = graphPanel;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        int[] arr = RandomArrayGenerator.generateArray(1000);
+        long startTime, endTime;
+
+        // Bubble Sort
+        startTime = System.nanoTime();
+        BubbleSort.sort(arr);
+        endTime = System.nanoTime();
+        long bubbleSortTime = endTime - startTime;
+
+        // Insertion Sort
+        arr = RandomArrayGenerator.generateArray(1000);
+        startTime = System.nanoTime();
+        InsertionSort.sort(arr);
+        endTime = System.nanoTime();
+        long insertionSortTime = endTime - startTime;
+
+        // Selection Sort
+        arr = RandomArrayGenerator.generateArray(1000);
+        startTime = System.nanoTime();
+        SelectionSort.sort(arr);
+        endTime = System.nanoTime();
+        long selectionSortTime = endTime - startTime;
+
+        //heap sort
+        arr= RandomArrayGenerator.generateArray(1000);
+        startTime=System.nanoTime();
+        HeapSort.sort(arr);
+        endTime=System.nanoTime();
+        long heapSortTime=endTime-startTime;
+
+        // merge sort
+        arr=RandomArrayGenerator.generateArray(1000);
+        startTime=System.nanoTime();
+        MergeSort.sort(arr);
+        endTime=System.nanoTime();
+        long mergeSortTime=endTime-startTime;
+
+        //qucksort
+        arr=RandomArrayGenerator.generateArray(1000);
+        startTime=System.nanoTime();
+        QuickSort.sort(arr);
+        endTime=System.nanoTime();
+        long qucikSortTime=endTime-startTime;
+
+        // Create a dataset for pie chart
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        dataset.setValue("Bubble Sort", bubbleSortTime);
+        dataset.setValue("Insertion Sort", insertionSortTime);
+        dataset.setValue("Selection Sort", selectionSortTime);
+        dataset.setValue("heapSort",heapSortTime);
+        dataset.setValue("QuickSort",qucikSortTime);
+        dataset.setValue("MergeSort",mergeSortTime);
+
+        // Create a pie chart
+        JFreeChart chart = ChartFactory.createPieChart("Sorting Algorithms Run Time in ns", dataset, true, true, false);
+
+        // Set color of pie chart sections
+        PiePlot plot = (PiePlot) chart.getPlot();
+        plot.setSectionPaint(1, Color.blue);
+        plot.setSectionPaint(2, Color.green);
+        plot.setSectionPaint(3, Color.red);
+        plot.setSectionPaint(4,Color.yellow);
+        plot.setSectionPaint(5,Color.pink);
+        plot.setSectionPaint(6,Color.ORANGE);
+
+        // Add chart to graph panel
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(800, 300));
+        graphPanel.removeAll();
+        graphPanel.add(chartPanel);
+        graphPanel.revalidate();
+        graphPanel.repaint();
+    }
+
+
+}
 
 
 
@@ -469,7 +557,5 @@ class PlayButtonListener implements ActionListener {
     }
 
 
-    public static void main(String[] args) {
-        new SortingAlgorithmsGUI();
-    }
+
 }
