@@ -5,8 +5,12 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,6 +29,7 @@ class SortingAlgorithmsGUI extends JFrame {
     private JButton playBtn;
     private JPanel graphPanel;
     private JButton playBtn1;
+    private JButton playBtn2;
 
     public SortingAlgorithmsGUI() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,14 +37,16 @@ class SortingAlgorithmsGUI extends JFrame {
 
         generateBtn = new JButton("Generate Random Array");
         playBtn = new JButton("Bar");
-        playBtn1 = new JButton("Pie"); // create new button
+        playBtn1 = new JButton("Pie");
+        playBtn2=new JButton("line");// create new button
         graphPanel = new JPanel();
 
         // Add components to the JFrame
         JPanel buttonPanel = new JPanel(); // create a new panel to hold the buttons
         buttonPanel.add(generateBtn);
         buttonPanel.add(playBtn);
-        buttonPanel.add(playBtn1); // add the new button to the panel
+        buttonPanel.add(playBtn1);
+        buttonPanel.add(playBtn2); // add the new button to the panel
         add(buttonPanel, BorderLayout.NORTH);
         add(graphPanel, BorderLayout.CENTER);
 
@@ -49,6 +56,7 @@ class SortingAlgorithmsGUI extends JFrame {
         generateBtn.addActionListener(new GenerateButtonListener());
         playBtn.addActionListener(new PlayButtonListener(graphPanel));
         playBtn1.addActionListener(new PlayButton1Listener(graphPanel));
+        playBtn2.addActionListener(new PlayButton2Listener(graphPanel));
     }
 
 }
@@ -380,15 +388,14 @@ class GenerateButtonListener implements ActionListener {
     }
 
 }
-class PlayButton1Listener implements ActionListener {
+class PlayButton2Listener implements ActionListener {
 
     private JPanel graphPanel;
 
-    public PlayButton1Listener(JPanel graphPanel) {
+    public PlayButton2Listener(JPanel graphPanel) {
         this.graphPanel = graphPanel;
     }
 
-    @Override
     public void actionPerformed(ActionEvent e) {
         int[] arr = RandomArrayGenerator.generateArray(1000);
         long startTime, endTime;
@@ -434,37 +441,30 @@ class PlayButton1Listener implements ActionListener {
         endTime=System.nanoTime();
         long qucikSortTime=endTime-startTime;
 
-        // Create a dataset for pie chart
-        DefaultPieDataset dataset = new DefaultPieDataset();
-        dataset.setValue("Bubble Sort", bubbleSortTime);
-        dataset.setValue("Insertion Sort", insertionSortTime);
-        dataset.setValue("Selection Sort", selectionSortTime);
-        dataset.setValue("heapSort",heapSortTime);
-        dataset.setValue("QuickSort",qucikSortTime);
-        dataset.setValue("MergeSort",mergeSortTime);
+        // Create a line chart of sorting run time
+        DefaultCategoryDataset lineDataset = new DefaultCategoryDataset();
+        lineDataset.setValue(bubbleSortTime, "Time", "Bubble Sort");
+        lineDataset.setValue(insertionSortTime, "Time", "Insertion Sort");
+        lineDataset.setValue(selectionSortTime, "Time", "Selection Sort");
+        lineDataset.setValue(heapSortTime,"Time","heap Sort");
+        lineDataset.setValue(qucikSortTime,"Time","Quick Sort");
+        lineDataset.setValue(mergeSortTime,"Time","Merge sort");
+        JFreeChart lineChart = ChartFactory.createLineChart("Sorting Algorithms Run Time In ns", "Algorithm", "Time (ns)", lineDataset, PlotOrientation.VERTICAL, false, true, false);
 
-        // Create a pie chart
-        JFreeChart chart = ChartFactory.createPieChart("Sorting Algorithms Run Time in ns", dataset, true, true, false);
-
-        // Set color of pie chart sections
-        PiePlot plot = (PiePlot) chart.getPlot();
-        plot.setSectionPaint(1, Color.blue);
-        plot.setSectionPaint(2, Color.green);
-        plot.setSectionPaint(3, Color.red);
-        plot.setSectionPaint(4,Color.yellow);
-        plot.setSectionPaint(5,Color.pink);
-        plot.setSectionPaint(6,Color.ORANGE);
+        // Set color of lines
+        CategoryPlot linePlot = lineChart.getCategoryPlot();
+        linePlot.getRenderer().setSeriesPaint(0, Color.blue);
+        linePlot.getRenderer().setSeriesPaint(1, Color.green);
+        linePlot.getRenderer().setSeriesPaint(2, Color.red);
 
         // Add chart to graph panel
-        ChartPanel chartPanel = new ChartPanel(chart);
+        ChartPanel chartPanel = new ChartPanel(lineChart);
         chartPanel.setPreferredSize(new Dimension(800, 300));
         graphPanel.removeAll();
         graphPanel.add(chartPanel);
         graphPanel.revalidate();
         graphPanel.repaint();
     }
-
-
 }
 
 
@@ -566,6 +566,92 @@ class PlayButtonListener implements ActionListener {
         graphPanel.repaint();
     }
 
+
+
+}
+class PlayButton1Listener implements ActionListener {
+
+    private JPanel graphPanel;
+
+    public PlayButton1Listener(JPanel graphPanel) {
+        this.graphPanel = graphPanel;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        int[] arr = RandomArrayGenerator.generateArray(1000);
+        long startTime, endTime;
+
+        // Bubble Sort
+        startTime = System.nanoTime();
+        BubbleSort.sort(arr);
+        endTime = System.nanoTime();
+        long bubbleSortTime = endTime - startTime;
+
+        // Insertion Sort
+        arr = RandomArrayGenerator.generateArray(1000);
+        startTime = System.nanoTime();
+        InsertionSort.sort(arr);
+        endTime = System.nanoTime();
+        long insertionSortTime = endTime - startTime;
+
+        // Selection Sort
+        arr = RandomArrayGenerator.generateArray(1000);
+        startTime = System.nanoTime();
+        SelectionSort.sort(arr);
+        endTime = System.nanoTime();
+        long selectionSortTime = endTime - startTime;
+
+        //heap sort
+        arr= RandomArrayGenerator.generateArray(1000);
+        startTime=System.nanoTime();
+        HeapSort.sort(arr);
+        endTime=System.nanoTime();
+        long heapSortTime=endTime-startTime;
+
+        // merge sort
+        arr=RandomArrayGenerator.generateArray(1000);
+        startTime=System.nanoTime();
+        MergeSort.sort(arr);
+        endTime=System.nanoTime();
+        long mergeSortTime=endTime-startTime;
+
+        //qucksort
+        arr=RandomArrayGenerator.generateArray(1000);
+        startTime=System.nanoTime();
+        QuickSort.sort(arr);
+        endTime=System.nanoTime();
+        long qucikSortTime=endTime-startTime;
+
+        // Create a dataset for pie chart
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        dataset.setValue("Bubble Sort", bubbleSortTime);
+        dataset.setValue("Insertion Sort", insertionSortTime);
+        dataset.setValue("Selection Sort", selectionSortTime);
+        dataset.setValue("heapSort",heapSortTime);
+        dataset.setValue("QuickSort",qucikSortTime);
+        dataset.setValue("MergeSort",mergeSortTime);
+
+        // Create a pie chart
+        JFreeChart chart = ChartFactory.createPieChart("Sorting Algorithms Run Time in ns", dataset, true, true, false);
+
+        // Set color of pie chart sections
+        PiePlot plot = (PiePlot) chart.getPlot();
+        plot.setSectionPaint(1, Color.blue);
+        plot.setSectionPaint(2, Color.green);
+        plot.setSectionPaint(3, Color.red);
+        plot.setSectionPaint(4,Color.yellow);
+        plot.setSectionPaint(5,Color.pink);
+        plot.setSectionPaint(6,Color.ORANGE);
+
+        // Add chart to graph panel
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(800, 300));
+        graphPanel.removeAll();
+        graphPanel.add(chartPanel);
+        graphPanel.revalidate();
+        graphPanel.repaint();
+    }
 
 
 }
