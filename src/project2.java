@@ -70,6 +70,7 @@ class RandomArrayGenerator {
         }
         return arr;
     }
+
 }
 class BubbleSort {
 
@@ -378,7 +379,14 @@ class GenerateButtonListener implements ActionListener {
 //        // JOptionPane.showMessageDialog(null, Arrays.toString(arr), "Random Array", JOptionPane.PLAIN_MESSAGE);
 //    }
     public void actionPerformed(ActionEvent e) {
-        int[] arr = RandomArrayGenerator.generateArray(1000);
+        String sizeStr = JOptionPane.showInputDialog(null, "Enter the size of the array:", "Array Size", JOptionPane.PLAIN_MESSAGE);
+        if (sizeStr == null) {
+            // User clicked Cancel or closed the dialog
+            return;
+        }
+        int size = Integer.parseInt(sizeStr);
+        int[] arr = RandomArrayGenerator.generateArray(size);
+
         JTextArea textArea = new JTextArea(20, 60);
         textArea.setText(Arrays.toString(arr));
         textArea.setEditable(false);
@@ -552,10 +560,14 @@ class PlayButtonListener implements ActionListener {
 
         // Set color of bars
         CategoryPlot plot = chart.getCategoryPlot();
-        plot.getRenderer().setSeriesPaint(0, Color.blue);
+      //  plot.getRenderer().setSeriesPaint(0, Color.blue);
         plot.getRenderer().setSeriesPaint(1, Color.green);
-        plot.getRenderer().setSeriesPaint(2, Color.red);
-        plot.getRenderer().setSeriesPaint(3,Color.green);
+      //
+        //  plot.getRenderer().setSeriesPaint(2, Color.red);
+        plot.getRenderer().setSeriesPaint(3,Color.orange);
+        plot.getRenderer().setSeriesPaint(4,Color.pink);
+        plot.getRenderer().setSeriesPaint(5,Color.cyan);
+        plot.getRenderer().setSeriesPaint(6,Color.yellow);
 
         // Add chart to graph panel
         ChartPanel chartPanel = new ChartPanel(chart);
@@ -579,7 +591,7 @@ class PlayButton1Listener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        int[] arr = RandomArrayGenerator.generateArray(1000);
+        int[] arr = RandomArrayGenerator.generateArray(10000);
         long startTime, endTime;
 
         // Bubble Sort
